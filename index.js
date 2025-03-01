@@ -15,19 +15,31 @@ function generateRandomKey(length) {
 
 async function createPastebinPaste(content) {
     try {
-        const pasteResponse = await axios.post("https://pastebin.com/api/api_post.php", null, {
-            params: {
-                api_dev_key: PASTEBIN_API_KEY,
-                api_option: "paste",
-                api_paste_code: content,
-                api_paste_private: 1,
-                api_paste_expire_date: "1W"
-            }
-        });
+        const params = new URLSearchParams();
+        params.append('api_dev_key', PASTEBIN_API_KEY);
+        params.append('api_option', 'paste');
+        params.append('api_paste_code', content);
+        params.append('api_paste_private', '1');
+        params.append('api_paste_expire_date', '1W');
 
-        return pasteResponse.data;
+        const pasteResponse = await axios.post(
+            "https://pastebin.com/api/api_post.php",
+            params.toString(),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            }
+        );
+
+        if (pasteResponse.data.startsWith("https://pastebin.com/")) {
+            return pasteResponse.data;
+        } else {
+            console.error("Pastebin error:", pasteResponse.data);
+            return null;
+        }
     } catch (error) {
-        console.error("Error creating Pastebin paste:", error.message);
+        console.error("Error creating Pastebin paste:", error.response?.data || error.message);
         return null;
     }
 }
