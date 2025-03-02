@@ -32,7 +32,7 @@ async function createWeeklyLinks() {
         const lootResponse = await axios.post(
             "https://api.lootlabs.gg/api/lootlabs/content_locker",
             {
-                title: "SCPRP Key",
+                title: "Script Key",
                 url: pasteResponse.data.replace("pastebin.com", "pastebin.com/raw"),
                 tier_id: 1,
                 number_of_tasks: 3,
